@@ -3,6 +3,7 @@
 import MainLayout from '@/components/layout/main-layout';
 import DeviceDetailsShelf from '@/components/devices/device-details-shelf';
 import { useState } from 'react';
+import { Eye } from 'lucide-react';
 
 const devicesData = [
   // ALPHA team - mostly Gold with some Blue
@@ -198,8 +199,37 @@ export default function DevicesPage() {
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDevices, setSelectedDevices] = useState(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
 
-  const handleDeviceClick = (device) => {
+  const toggleDeviceSelection = (device, index, event) => {
+    if (event.shiftKey && lastSelectedIndex !== null) {
+      // Shift+click range selection
+      const start = Math.min(lastSelectedIndex, index);
+      const end = Math.max(lastSelectedIndex, index);
+      const newSelected = new Set(selectedDevices);
+      
+      for (let i = start; i <= end; i++) {
+        newSelected.add(sortedDevices[i].id);
+      }
+      
+      setSelectedDevices(newSelected);
+    } else {
+      // Regular click toggle
+      const newSelected = new Set(selectedDevices);
+      if (selectedDevices.has(device.id)) {
+        newSelected.delete(device.id);
+      } else {
+        newSelected.add(device.id);
+      }
+      setSelectedDevices(newSelected);
+      setLastSelectedIndex(index);
+    }
+  };
+
+  const handleDeviceDetails = (device, event) => {
+    event.preventDefault();
+    event.stopPropagation();
     setSelectedDevice(device);
     setIsShelfOpen(true);
   };
@@ -216,6 +246,20 @@ export default function DevicesPage() {
       setSortField(field);
       setSortDirection('asc');
     }
+  };
+
+
+  const handleSelectAll = () => {
+    if (selectedDevices.size === sortedDevices.length) {
+      setSelectedDevices(new Set());
+    } else {
+      setSelectedDevices(new Set(sortedDevices.map(d => d.id)));
+    }
+  };
+
+  const handleBulkAction = (action) => {
+    console.log(`Bulk action '${action}' on devices:`, Array.from(selectedDevices));
+    // Implement bulk actions here
   };
 
   const filteredDevices = devicesData.filter(device => {
@@ -251,8 +295,8 @@ export default function DevicesPage() {
           <h1 className="text-xl font-medium text-black uppercase tracking-widest">DEVICES</h1>
         </div>
 
-        {/* Search Filter */}
-        <div>
+        {/* Search Filter and Bulk Actions */}
+        <div className="flex items-center justify-between">
           <input
             type="text"
             placeholder="Filter by device number or IMEI..."
@@ -260,6 +304,32 @@ export default function DevicesPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md px-3 py-2 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
           />
+          
+          {selectedDevices.size > 0 && (
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">{selectedDevices.size} selected</span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => handleBulkAction('assign-profile')}
+                  className="bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
+                >
+                  Assign Profile
+                </button>
+                <button
+                  onClick={() => handleBulkAction('remove-profile')}
+                  className="bg-gray-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-700 transition-colors"
+                >
+                  Remove Profile
+                </button>
+                <button
+                  onClick={() => setSelectedDevices(new Set())}
+                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-xs font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Device Table */}
@@ -268,6 +338,14 @@ export default function DevicesPage() {
             <table className="w-full">
               <thead>
                 <tr>
+                  <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase w-12">
+                    <input
+                      type="checkbox"
+                      checked={selectedDevices.size === sortedDevices.length && sortedDevices.length > 0}
+                      onChange={handleSelectAll}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 checked:bg-blue-600 checked:border-blue-600"
+                    />
+                  </th>
                   <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-black" onClick={() => handleSort('deviceNumber')}>
                     Device Number {sortField === 'deviceNumber' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
@@ -286,11 +364,28 @@ export default function DevicesPage() {
                   <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-black" onClick={() => handleSort('dateLastUpdated')}>
                     Date Last Updated {sortField === 'dateLastUpdated' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
+                  <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase w-20">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {sortedDevices.map((device) => (
-                  <tr key={device.id} className="hover:bg-white hover:font-medium cursor-pointer" onClick={() => handleDeviceClick(device)}>
+                {sortedDevices.map((device, index) => (
+                  <tr 
+                    key={device.id} 
+                    className={`hover:bg-gray-50 cursor-pointer ${
+                      selectedDevices.has(device.id) ? 'bg-white font-medium' : ''
+                    }`}
+                    onClick={(e) => toggleDeviceSelection(device, index, e)}
+                  >
+                    <td className="py-4 text-sm text-gray-900">
+                      <input
+                        type="checkbox"
+                        checked={selectedDevices.has(device.id)}
+                        onChange={() => {}} 
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 checked:bg-blue-600 checked:border-blue-600 pointer-events-none"
+                      />
+                    </td>
                     <td className="py-4 text-sm text-gray-900">
                       {device.deviceNumber}
                     </td>
@@ -328,6 +423,15 @@ export default function DevicesPage() {
                     </td>
                     <td className="py-4 text-sm text-gray-900">
                       {device.dateLastUpdated}
+                    </td>
+                    <td className="py-4 text-sm text-gray-900">
+                      <button
+                        onClick={(e) => handleDeviceDetails(device, e)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        title="View details"
+                      >
+                        <Eye size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}
