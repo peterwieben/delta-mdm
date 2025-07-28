@@ -5,9 +5,12 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 
 const navigation = [
+  { name: 'HOME', href: '/' },
   { name: 'DEVICES', href: '/devices' },
   { name: 'APPS', href: '/apps' },
   { name: 'PROFILES', href: '/profiles' },
+  { name: 'WORKFLOWS', href: '/workflows' },
+  { name: 'USERS', href: '/users' },
 ];
 
 export default function MainLayout({ children }) {
@@ -17,7 +20,7 @@ export default function MainLayout({ children }) {
     <div className="min-h-screen" style={{ background: "linear-gradient(to right, #fff, #f2f2f2)" }}>
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className="w-48 bg-transparent flex flex-col border-r border-[rgba(0,0,0,0.1)] fixed h-full px-6">
+        <div className="w-40 bg-transparent flex flex-col border-r border-[rgba(0,0,0,0.1)] fixed h-full px-6">
           {/* Header with Logo */}
           <div className="flex items-center h-12">
             <Image
@@ -38,7 +41,7 @@ export default function MainLayout({ children }) {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className={`block py-2 text-sm font-medium transition-colors ${
+                      className={`block py-2 text-xs tracking-wider font-medium transition-colors ${
                         isActive
                           ? 'text-black'
                           : 'text-gray-500 hover:text-black'

@@ -3,42 +3,54 @@
 import { useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/main-layout';
 
-const profilesData = [
+const workflowsData = [
   {
     id: 1,
-    profileName: 'Gold',
-    type: 'Security',
-    devices: 25,
+    workflowName: 'Device Setup',
+    description: 'Complete onboarding workflow for new corporate devices',
+    actions: 8,
     status: 'Active',
+    lastModified: '2025-07-25',
   },
   {
     id: 2,
-    profileName: 'Blue',
-    type: 'WiFi',
-    devices: 12,
+    workflowName: 'Security Compliance',
+    description: 'Enforce security policies and compliance checks',
+    actions: 12,
     status: 'Active',
+    lastModified: '2025-07-24',
   },
   {
     id: 3,
-    profileName: 'Red',
-    type: 'VPN',
-    devices: 8,
-    status: 'Inactive',
+    workflowName: 'App Deployment',
+    description: 'Batch installation of corporate applications',
+    actions: 6,
+    status: 'Draft',
+    lastModified: '2025-07-23',
   },
   {
     id: 4,
-    profileName: 'Black',
-    type: 'Email',
-    devices: 45,
+    workflowName: 'Device Wipe',
+    description: 'Complete device data wipe and factory reset',
+    actions: 4,
     status: 'Active',
+    lastModified: '2025-07-22',
+  },
+  {
+    id: 5,
+    workflowName: 'User Offboarding',
+    description: 'Remove corporate data and revoke access',
+    actions: 10,
+    status: 'Active',
+    lastModified: '2025-07-21',
   },
 ];
 
-export default function ProfilesPage() {
+export default function WorkflowsPage() {
   const router = useRouter();
 
-  const handleProfileClick = (profileId) => {
-    router.push(`/profiles/${profileId}`);
+  const handleWorkflowClick = (workflowId) => {
+    router.push(`/workflows/${workflowId}`);
   };
 
   return (
@@ -46,67 +58,61 @@ export default function ProfilesPage() {
       <div className="space-y-8">
         {/* Page Title */}
         <div className="pb-4 flex items-center justify-between">
-          <h1 className="text-xl font-medium text-black uppercase tracking-widest">PROFILES</h1>
+          <h1 className="text-xl font-medium text-black uppercase tracking-widest">WORKFLOWS</h1>
           <button className="bg-black text-white px-4 py-2 rounded text-xs font-medium flex items-center space-x-1 hover:bg-gray-800 transition-colors cursor-pointer">
             <span className="text-sm">+</span>
-            <span>Add Profile</span>
+            <span>Add Workflow</span>
           </button>
         </div>
 
-        {/* Profiles Table */}
+        {/* Workflows Table */}
         <div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
-                    Profile Name
+                    Workflow Name
                   </th>
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
-                    Type
+                    Description
                   </th>
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
-                    Devices
+                    Actions
                   </th>
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
                     Status
                   </th>
+                  <th className="text-left py-4 text-sm font-medium text-gray-900">
+                    Last Modified
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {profilesData.map((profile) => (
-                  <tr key={profile.id} className="hover:bg-white hover:font-medium cursor-pointer" onClick={() => handleProfileClick(profile.id)}>
+                {workflowsData.map((workflow) => (
+                  <tr key={workflow.id} className="hover:bg-white hover:font-medium cursor-pointer" onClick={() => handleWorkflowClick(workflow.id)}>
                     <td className="py-4 text-sm text-gray-900">
-                      {profile.profileName}
+                      {workflow.workflowName}
+                    </td>
+                    <td className="py-4 text-sm text-gray-900">
+                      {workflow.description}
+                    </td>
+                    <td className="py-4 text-sm text-gray-900">
+                      {workflow.actions}
                     </td>
                     <td className="py-4 text-sm text-gray-900">
                       <span className={`inline-flex items-center px-2 py-1 text-xs font-medium ${
-                        profile.profileName === 'Gold' 
-                          ? 'bg-yellow-200 text-yellow-800'
-                          : profile.profileName === 'Blue'
-                          ? 'bg-blue-200 text-blue-800'
-                          : profile.profileName === 'Red'
-                          ? 'bg-red-200 text-red-800'
-                          : profile.profileName === 'Black'
-                          ? 'bg-gray-200 text-gray-800'
-                          : 'bg-gray-200 text-gray-800'
-                      }`}>
-                        {profile.type}
-                      </span>
-                    </td>
-                    <td className="py-4 text-sm text-gray-900">
-                      {profile.devices}
-                    </td>
-                    <td className="py-4 text-sm text-gray-900">
-                      <span className={`inline-flex items-center px-2 py-1 text-xs font-medium ${
-                        profile.status === 'Active' 
+                        workflow.status === 'Active' 
                           ? 'bg-green-200 text-green-800'
-                          : profile.status === 'Pending'
+                          : workflow.status === 'Draft'
                           ? 'bg-yellow-200 text-yellow-800'
                           : 'bg-gray-200 text-gray-800'
                       }`}>
-                        {profile.status}
+                        {workflow.status}
                       </span>
+                    </td>
+                    <td className="py-4 text-sm text-gray-900">
+                      {workflow.lastModified}
                     </td>
                   </tr>
                 ))}
