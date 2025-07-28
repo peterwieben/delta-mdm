@@ -3,7 +3,6 @@
 import MainLayout from '@/components/layout/main-layout';
 import DeviceDetailsShelf from '@/components/devices/device-details-shelf';
 import { useState } from 'react';
-import { Eye } from 'lucide-react';
 
 const devicesData = [
   // ALPHA team - mostly Gold with some Blue
@@ -202,9 +201,11 @@ export default function DevicesPage() {
   const [selectedDevices, setSelectedDevices] = useState(new Set());
   const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
 
-  const toggleDeviceSelection = (device, index, event) => {
+  const handleCheckboxChange = (device, index, event) => {
+    event.stopPropagation();
+    
     if (event.shiftKey && lastSelectedIndex !== null) {
-      // Shift+click range selection
+      // Shift+click range selection on checkboxes
       const start = Math.min(lastSelectedIndex, index);
       const end = Math.max(lastSelectedIndex, index);
       const newSelected = new Set(selectedDevices);
@@ -215,7 +216,7 @@ export default function DevicesPage() {
       
       setSelectedDevices(newSelected);
     } else {
-      // Regular click toggle
+      // Regular checkbox toggle
       const newSelected = new Set(selectedDevices);
       if (selectedDevices.has(device.id)) {
         newSelected.delete(device.id);
@@ -227,8 +228,17 @@ export default function DevicesPage() {
     }
   };
 
-  const handleDeviceDetails = (device, event) => {
-    event.preventDefault();
+  const handleRowClick = (device, index, event) => {
+    // Don't trigger if clicking on a button or other interactive element
+    if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+      return;
+    }
+    
+    // Row click should toggle selection instead of opening details
+    handleCheckboxChange(device, index, event);
+  };
+
+  const handleOpenDetails = (device, event) => {
     event.stopPropagation();
     setSelectedDevice(device);
     setIsShelfOpen(true);
@@ -343,7 +353,7 @@ export default function DevicesPage() {
                       type="checkbox"
                       checked={selectedDevices.size === sortedDevices.length && sortedDevices.length > 0}
                       onChange={handleSelectAll}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 checked:bg-blue-600 checked:border-blue-600"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 checked:bg-blue-600 checked:border-blue-600"
                     />
                   </th>
                   <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-black" onClick={() => handleSort('deviceNumber')}>
@@ -364,8 +374,8 @@ export default function DevicesPage() {
                   <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase cursor-pointer hover:text-black" onClick={() => handleSort('dateLastUpdated')}>
                     Date Last Updated {sortField === 'dateLastUpdated' && (sortDirection === 'asc' ? '↑' : '↓')}
                   </th>
-                  <th className="text-left py-4 text-xs font-medium text-gray-500 uppercase w-20">
-                    Actions
+                  <th className="text-right py-4 text-xs font-medium text-gray-500 uppercase w-16">
+                    Details
                   </th>
                 </tr>
               </thead>
@@ -373,17 +383,18 @@ export default function DevicesPage() {
                 {sortedDevices.map((device, index) => (
                   <tr 
                     key={device.id} 
-                    className={`hover:bg-gray-50 cursor-pointer ${
+                    className={`hover:bg-gray-50 cursor-pointer border-t ${
                       selectedDevices.has(device.id) ? 'bg-white font-medium' : ''
                     }`}
-                    onClick={(e) => toggleDeviceSelection(device, index, e)}
+                    style={{ borderTopColor: '#f2f2f2' }}
+                    onClick={(e) => handleRowClick(device, index, e)}
                   >
                     <td className="py-4 text-sm text-gray-900">
                       <input
                         type="checkbox"
                         checked={selectedDevices.has(device.id)}
-                        onChange={() => {}} 
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 checked:bg-blue-600 checked:border-blue-600 pointer-events-none"
+                        onChange={(e) => handleCheckboxChange(device, index, e)}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 checked:bg-blue-600 checked:border-blue-600"
                       />
                     </td>
                     <td className="py-4 text-sm text-gray-900">
@@ -424,13 +435,15 @@ export default function DevicesPage() {
                     <td className="py-4 text-sm text-gray-900">
                       {device.dateLastUpdated}
                     </td>
-                    <td className="py-4 text-sm text-gray-900">
+                    <td className="py-4 text-right">
                       <button
-                        onClick={(e) => handleDeviceDetails(device, e)}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        onClick={(e) => handleOpenDetails(device, e)}
+                        className="bg-white text-gray-400 hover:text-black transition-colors cursor-pointer py-1 pl-12 pr-2 flex items-center justify-end rounded"
                         title="View details"
                       >
-                        <Eye size={16} />
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </button>
                     </td>
                   </tr>

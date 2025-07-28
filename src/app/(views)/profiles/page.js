@@ -68,14 +68,14 @@ export default function ProfilesPage() {
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
                     Devices
                   </th>
-                  <th className="text-left py-4 text-sm font-medium text-gray-900">
+                  <th className="text-right py-4 text-sm font-medium text-gray-900">
                     Status
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {profilesData.map((profile) => (
-                  <tr key={profile.id} className="hover:bg-white hover:font-medium cursor-pointer" onClick={() => handleProfileClick(profile.id)}>
+                  <tr key={profile.id} className="hover:bg-white hover:font-medium cursor-pointer border-t" style={{ borderTopColor: '#f2f2f2' }} onClick={() => handleProfileClick(profile.id)}>
                     <td className="py-4 text-sm text-gray-900">
                       {profile.profileName}
                     </td>
@@ -97,7 +97,7 @@ export default function ProfilesPage() {
                     <td className="py-4 text-sm text-gray-900">
                       {profile.devices}
                     </td>
-                    <td className="py-4 text-sm text-gray-900">
+                    <td className="py-4 text-sm text-gray-900 text-right">
                       <span className={`inline-flex items-center px-2 py-1 text-xs font-medium ${
                         profile.status === 'Active' 
                           ? 'bg-green-200 text-green-800'

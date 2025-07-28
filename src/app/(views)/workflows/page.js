@@ -83,14 +83,14 @@ export default function WorkflowsPage() {
                   <th className="text-left py-4 text-sm font-medium text-gray-900">
                     Status
                   </th>
-                  <th className="text-left py-4 text-sm font-medium text-gray-900">
+                  <th className="text-right py-4 text-sm font-medium text-gray-900">
                     Last Modified
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {workflowsData.map((workflow) => (
-                  <tr key={workflow.id} className="hover:bg-white hover:font-medium cursor-pointer" onClick={() => handleWorkflowClick(workflow.id)}>
+                  <tr key={workflow.id} className="hover:bg-white hover:font-medium cursor-pointer border-t" style={{ borderTopColor: '#f2f2f2' }} onClick={() => handleWorkflowClick(workflow.id)}>
                     <td className="py-4 text-sm text-gray-900">
                       {workflow.workflowName}
                     </td>
@@ -111,7 +111,7 @@ export default function WorkflowsPage() {
                         {workflow.status}
                       </span>
                     </td>
-                    <td className="py-4 text-sm text-gray-900">
+                    <td className="py-4 text-sm text-gray-900 text-right">
                       {workflow.lastModified}
                     </td>
                   </tr>
