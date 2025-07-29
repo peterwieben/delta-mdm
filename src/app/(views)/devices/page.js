@@ -3,7 +3,7 @@
 import MainLayout from '@/components/layout/main-layout';
 import DeviceDetailsShelf from '@/components/devices/device-details-shelf';
 import { useState } from 'react';
-import { Check, Loader2, Smartphone, File, Lock, Image, Hash, Wifi, Camera, AlertTriangle, Shield, Activity } from 'lucide-react';
+import { Check, Loader2, Smartphone, File, Lock, Image, Hash, Wifi, Camera, AlertTriangle, Shield, Activity, Play } from 'lucide-react';
 
 const devicesData = [
   // ALPHA team - mostly Gold with some Blue
@@ -551,9 +551,10 @@ export default function DevicesPage() {
               <div className="flex space-x-2">
                 <button
                   onClick={() => setIsWorkflowSheetOpen(true)}
-                  className="bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
+                  className="bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors flex items-center space-x-1"
                 >
-                  RUN WORKFLOW
+                  <Play className="w-3 h-3" />
+                  <span>RUN WORKFLOW</span>
                 </button>
                 <button
                   onClick={() => handleBulkAction('apply-profile')}

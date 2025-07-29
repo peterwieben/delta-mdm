@@ -12,6 +12,14 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata = {
   title: "Delta MDM",
   description: "Mobile Device Management System",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' }
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png'
+  }
 };
 
 export default function RootLayout({ children }) {

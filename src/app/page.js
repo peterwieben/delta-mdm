@@ -229,22 +229,18 @@ export default function Home() {
       <div className="mt-32 space-y-32">
         {/* Hero Section */}
         <div className="text-left pt-16 pb-12">
-          <h1 className="text-2xl font-light text-gray-900 mb-12">All is well.</h1>
+          <h1 className="text-2xl font-light text-gray-900 mb-12 flex items-center space-x-3">
+            <span>236 heartbeats</span>
+            <div className="w-2 h-2 rounded-full bg-green-500 heartbeat-pulse"></div>
+          </h1>
           <div className="space-y-6">
             <p className="text-lg font-medium text-gray-700">{currentDevices} devices</p>
-            <div className="flex items-center space-x-8 text-base">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span className="text-green-700 text-sm font-medium">{allClear} all clear</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                <span className="text-blue-700 text-sm font-medium">{pendingActions} pending actions</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                <span className="text-yellow-700 text-sm font-medium">{warnings} warnings</span>
-              </div>
+            <div className="flex items-center text-base">
+              <span className="text-green-700 text-sm font-medium">{allClear} all clear</span>
+              <div className="w-5 h-px bg-gray-300 mx-4"></div>
+              <span className="text-blue-700 text-sm font-medium">{pendingActions} pending actions</span>
+              <div className="w-5 h-px bg-gray-300 mx-4"></div>
+              <span className="text-yellow-700 text-sm font-medium">{warnings} warnings</span>
             </div>
           </div>
         </div>

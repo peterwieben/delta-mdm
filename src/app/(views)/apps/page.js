@@ -49,21 +49,14 @@ export default function AppsPage() {
     <MainLayout>
       <div className="space-y-8">
         {/* Page Title */}
-        <div className="pb-4">
+        <div className="pb-4 flex items-center justify-between">
           <h1 className="text-xl font-medium text-black uppercase tracking-widest">APPS</h1>
-        </div>
-
-        {/* Add App Button */}
-        <div className="flex items-center space-x-4">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-            {appsData.length} Apps
-          </h3>
           <button
             onClick={() => setShowAddAppDialog(true)}
-            className="bg-black text-white px-3 py-1 rounded text-xs font-medium flex items-center space-x-1 hover:bg-gray-800 transition-colors cursor-pointer"
+            className="bg-black text-white px-4 py-2 rounded text-xs font-medium flex items-center space-x-1 hover:bg-gray-800 transition-colors cursor-pointer"
           >
             <span className="text-sm">+</span>
-            <span>Add New</span>
+            <span>Add App</span>
           </button>
         </div>
 

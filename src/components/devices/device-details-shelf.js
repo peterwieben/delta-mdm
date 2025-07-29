@@ -1,10 +1,68 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Play } from 'lucide-react';
 import WipeDialog from './wipe-dialog';
+
+// Workflow data (same as devices page)
+const workflowsData = [
+  {
+    id: 1,
+    workflowName: 'Device Setup',
+    description: 'Complete onboarding workflow for new corporate devices',
+    actions: 3,
+    status: 'Active',
+    lastModified: '2025-07-25',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'install-app',
+        title: 'Install Corporate VPN',
+        config: { appName: 'Corporate VPN', packageName: 'com.corp.vpn' }
+      },
+      {
+        id: 'step-2',
+        type: 'set-pincode',
+        title: 'Set Device PIN',
+        config: { pinLength: '6', complexity: 'high' }
+      },
+      {
+        id: 'step-3',
+        type: 'add-file',
+        title: 'Install Certificate',
+        config: { fileName: 'corporate-cert.pem', destination: '/system/certs/' }
+      }
+    ]
+  },
+  {
+    id: 2,
+    workflowName: 'Security Compliance',
+    description: 'Enforce security policies and compliance checks',
+    actions: 2,
+    status: 'Active',
+    lastModified: '2025-07-24',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'strip-permissions',
+        title: 'Revoke Unused Permissions',
+        config: {}
+      },
+      {
+        id: 'step-2',
+        type: 'install-certificate',
+        title: 'Install Security Certificate',
+        config: {}
+      }
+    ]
+  }
+];
 
 export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
   const [isWipeDialogOpen, setIsWipeDialogOpen] = useState(false);
+  const [isWorkflowSheetOpen, setIsWorkflowSheetOpen] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [isRunningWorkflow, setIsRunningWorkflow] = useState(false);
 
   const handleWipeClick = () => {
     setIsWipeDialogOpen(true);
@@ -12,6 +70,32 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
 
   const handleWipeDialogClose = () => {
     setIsWipeDialogOpen(false);
+  };
+
+  const handleRunWorkflow = () => {
+    setIsWorkflowSheetOpen(true);
+  };
+
+  const handleCloseWorkflowSheet = () => {
+    setIsWorkflowSheetOpen(false);
+    setSelectedWorkflow(null);
+    setIsRunningWorkflow(false);
+  };
+
+  const handleWorkflowSelect = (workflow) => {
+    setSelectedWorkflow(workflow);
+  };
+
+  const handleWorkflowRun = () => {
+    setIsRunningWorkflow(true);
+    console.log(`Running workflow '${selectedWorkflow.workflowName}' on device ${device.deviceNumber}`);
+    
+    // Simulate workflow execution
+    setTimeout(() => {
+      setIsRunningWorkflow(false);
+      setIsWorkflowSheetOpen(false);
+      setSelectedWorkflow(null);
+    }, 3000);
   };
 
   useEffect(() => {
@@ -185,29 +269,22 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
           <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
             <div className="flex space-x-3">
               <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
-                style={{ border: '1px solid #dc2626', color: '#dc2626' }}
+                className="bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors flex items-center space-x-1"
+                onClick={handleRunWorkflow}
+              >
+                <Play className="w-3 h-3" />
+                <span>RUN WORKFLOW</span>
+              </button>
+              <button 
+                className="bg-gray-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-700 transition-colors"
+              >
+                APPLY PROFILE
+              </button>
+              <button 
+                className="bg-red-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-red-700 transition-colors"
                 onClick={handleWipeClick}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#fef2f2'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
-                Wipe
-              </button>
-              <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
-                style={{ border: '1px solid #2563eb', color: '#2563eb' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#eff6ff'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-              >
-                Update
-              </button>
-              <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
-                style={{ border: '1px solid #16a34a', color: '#16a34a' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0fdf4'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-              >
-                Track
+                REMOVE DEVICE
               </button>
             </div>
           </div>
@@ -220,6 +297,104 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
           />
         </div>
       </div>
+
+      {/* Workflow Sheet */}
+      {isWorkflowSheetOpen && (
+        <div className="fixed inset-0 flex items-end justify-end z-60" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>
+          <div className="bg-white rounded-lg shadow-xl w-96 h-[700px] flex flex-col m-4">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex items-center space-x-3">
+                {selectedWorkflow && (
+                  <button
+                    onClick={() => setSelectedWorkflow(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                    disabled={isRunningWorkflow}
+                  >
+                    ←
+                  </button>
+                )}
+                <h3 className="text-sm font-medium text-black uppercase tracking-widest">
+                  {selectedWorkflow ? selectedWorkflow.workflowName : 'Run Workflow'}
+                </h3>
+              </div>
+              <button
+                onClick={handleCloseWorkflowSheet}
+                className="text-gray-400 hover:text-gray-600 text-lg"
+                disabled={isRunningWorkflow}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+              {selectedWorkflow ? (
+                <div className="space-y-4">
+                  {/* Workflow Info */}
+                  <div className="bg-gray-50 rounded-md p-3">
+                    <p className="text-sm font-medium text-gray-900">{selectedWorkflow.workflowName}</p>
+                    <p className="text-xs text-gray-500">{selectedWorkflow.description}</p>
+                    <p className="text-xs text-gray-400 mt-1">{selectedWorkflow.steps.length} steps</p>
+                  </div>
+
+                  {/* Device Context */}
+                  <div className="bg-blue-50 rounded-md p-3">
+                    <p className="text-sm font-medium text-blue-900">Target Device</p>
+                    <p className="text-xs text-blue-700">{device?.deviceNumber}</p>
+                    <p className="text-xs text-blue-600">{device?.build} build</p>
+                  </div>
+
+                  {/* Workflow Steps */}
+                  <div className="space-y-2">
+                    {selectedWorkflow.steps.map((step, index) => (
+                      <div key={step.id} className="bg-white border border-gray-200 rounded-md p-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="bg-black text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-medium">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">{step.title}</p>
+                            <p className="text-xs text-gray-500">Type: {step.type}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="text-sm text-gray-600">Select a workflow to run on {device?.deviceNumber}:</p>
+                  {workflowsData.map((workflow) => (
+                    <div
+                      key={workflow.id}
+                      onClick={() => handleWorkflowSelect(workflow)}
+                      className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 cursor-pointer transition-colors"
+                    >
+                      <h4 className="text-sm font-medium text-gray-900">{workflow.workflowName}</h4>
+                      <p className="text-xs text-gray-500 mt-1">{workflow.description}</p>
+                      <p className="text-xs text-gray-400 mt-1">{workflow.steps.length} steps</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t">
+              {selectedWorkflow && (
+                <button
+                  onClick={handleWorkflowRun}
+                  disabled={isRunningWorkflow}
+                  className="w-full bg-black text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isRunningWorkflow ? 'Running...' : 'Run Workflow'}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
