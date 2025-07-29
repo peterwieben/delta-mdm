@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Smartphone, FileText } from 'lucide-react';
+import Link from 'next/link';
 import MainLayout from '@/components/layout/main-layout';
 
 // Sample data for dashboard stats
@@ -251,14 +252,14 @@ export default function Home() {
           <div className="flex space-x-4">
             <button 
               onClick={() => setShowOnboardDialog(true)}
-              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2"
+              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
             >
               <Smartphone className="w-4 h-4" />
               <span>Onboard Device</span>
             </button>
             <button 
               onClick={() => handleExportReport()}
-              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2"
+              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2 cursor-pointer"
             >
               <FileText className="w-4 h-4" />
               <span>Export Report</span>
@@ -348,7 +349,15 @@ export default function Home() {
 
         {/* Recent Activity */}
         <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-6">Recent Activity</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Recent Activity</h3>
+            <Link 
+              href="/history" 
+              className="text-xs text-gray-500 hover:text-black transition-colors uppercase tracking-wide font-medium"
+            >
+              SEE ALL
+            </Link>
+          </div>
           <div className="space-y-4">
             {recentActivity.map((activity) => (
               <div key={activity.id} className="flex items-start space-x-3">
@@ -398,7 +407,7 @@ export default function Home() {
             <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setShowOnboardDialog(false)}
-                className="px-6 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                className="px-6 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer"
               >
                 Close
               </button>

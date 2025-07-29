@@ -13,7 +13,11 @@ const navigation = [
   { name: 'APPS', href: '/apps' },
   { name: 'PROFILES', href: '/profiles' },
   { name: 'WORKFLOWS', href: '/workflows' },
+];
+
+const secondaryNavigation = [
   { name: 'USERS', href: '/users' },
+  { name: 'HISTORY', href: '/history' },
 ];
 
 // Sample alerts data
@@ -74,7 +78,28 @@ export default function MainLayout({ children }) {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className={`block py-2 text-xs tracking-wider font-medium transition-colors ${
+                      className={`block py-2 text-xs tracking-wider font-medium transition-colors cursor-pointer ${
+                        isActive
+                          ? 'text-black'
+                          : 'text-gray-500 hover:text-black'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            
+            {/* Secondary Navigation */}
+            <ul className="space-y-2 mt-16">
+              {secondaryNavigation.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <li key={item.name}>
+                    <Link
+                      href={item.href}
+                      className={`block py-2 text-xs tracking-wider font-medium transition-colors cursor-pointer ${
                         isActive
                           ? 'text-black'
                           : 'text-gray-500 hover:text-black'
@@ -92,7 +117,7 @@ export default function MainLayout({ children }) {
           <div className="absolute bottom-0 left-0 right-0 border-t border-black/10" style={{ marginBottom: '10px' }}>
             <Link
               href="/settings"
-              className="block pt-2 px-6 text-xs font-medium text-gray-500 hover:text-black transition-colors truncate"
+              className="block pt-2 px-6 text-xs font-medium text-gray-500 hover:text-black transition-colors truncate cursor-pointer"
             >
               {user?.username || 'user001'}
             </Link>
@@ -111,7 +136,7 @@ export default function MainLayout({ children }) {
       {/* Fixed Alerts Button - Lower Right */}
       <button
         onClick={() => setShowAlertsSheet(true)}
-        className="fixed bottom-1 right-1 text-red-600 border border-red-600 rounded-sm px-3 py-1 transition-colors duration-200 z-40 backdrop-blur-sm leading-none"
+        className="fixed bottom-1 right-1 text-red-600 border border-red-600 rounded-sm px-3 py-1 transition-colors duration-200 z-40 backdrop-blur-sm leading-none cursor-pointer"
         style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
       >
         <span className="text-xs font-medium">{alertsData.length} ALERTS</span>
@@ -136,7 +161,7 @@ export default function MainLayout({ children }) {
                 </h3>
                 <button
                   onClick={() => setShowAlertsSheet(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-gray-400 hover:text-gray-600 cursor-pointer"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
