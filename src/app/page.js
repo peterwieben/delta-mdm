@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Smartphone, FileText } from 'lucide-react';
 import MainLayout from '@/components/layout/main-layout';
 
 // Sample data for dashboard stats
@@ -192,10 +193,17 @@ function RingChart({ percentage, label, color = "#22c55e", gradientId, gradientC
 }
 
 export default function Home() {
+  const [showOnboardDialog, setShowOnboardDialog] = useState(false);
+  
   const currentDevices = 242;
   const allClear = 236;
   const pendingActions = 4;
   const warnings = 2;
+
+  const handleExportReport = () => {
+    // TODO: Implement export functionality
+    console.log('Export report clicked');
+  };
 
   // Team distribution data
   const teamData = [
@@ -238,6 +246,27 @@ export default function Home() {
                 <span className="text-yellow-700 text-sm font-medium">{warnings} warnings</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="text-left">
+          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">Quick Actions</h2>
+          <div className="flex space-x-4">
+            <button 
+              onClick={() => setShowOnboardDialog(true)}
+              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2"
+            >
+              <Smartphone className="w-4 h-4" />
+              <span>Onboard Device</span>
+            </button>
+            <button 
+              onClick={() => handleExportReport()}
+              className="px-6 py-2 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg border border-gray-300 transition-colors duration-200 flex items-center space-x-2"
+            >
+              <FileText className="w-4 h-4" />
+              <span>Export Report</span>
+            </button>
           </div>
         </div>
 
@@ -342,6 +371,45 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Onboard Device Dialog */}
+      {showOnboardDialog && (
+        <div className="fixed inset-0 flex items-center justify-center z-50" style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div className="text-center mb-6">
+            </div>
+            
+            {/* QR Code */}
+            <div className="flex justify-center mb-6">
+              <img 
+                src="/qr.png" 
+                alt="Device onboarding QR code"
+                className="w-64 h-64 rounded-lg"
+              />
+            </div>
+            
+            {/* Explanation Text */}
+            <div className="text-center space-y-3">
+              <p className="text-sm text-gray-700 font-medium">
+                Scan to add device to Delta MDM
+              </p>
+              <p className="text-xs text-gray-500">
+                Once scanned, your device will be automatically added to the roster and configured with the appropriate security policies and applications.
+              </p>
+
+            </div>
+            
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setShowOnboardDialog(false)}
+                className="px-6 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
