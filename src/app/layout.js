@@ -1,5 +1,7 @@
 import { IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
@@ -19,7 +21,11 @@ export default function RootLayout({ children }) {
         className={`${ibmPlexMono.className} antialiased`}
         style={{ background: "linear-gradient(to right, #fff, #f2f2f2)" }}
       >
-        {children}
+        <AuthProvider>
+          <ProtectedRoute>
+            {children}
+          </ProtectedRoute>
+        </AuthProvider>
       </body>
     </html>
   );

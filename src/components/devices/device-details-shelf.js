@@ -1,8 +1,19 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import WipeDialog from './wipe-dialog';
 
 export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
+  const [isWipeDialogOpen, setIsWipeDialogOpen] = useState(false);
+
+  const handleWipeClick = () => {
+    setIsWipeDialogOpen(true);
+  };
+
+  const handleWipeDialogClose = () => {
+    setIsWipeDialogOpen(false);
+  };
+
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -58,17 +69,37 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
               {/* Device Info */}
               <div>
-                <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
-                  Basic Information
-                </h3>
                 <div className="space-y-3">
                   <div>
                     <label className="text-xs text-gray-400 uppercase tracking-wide">Device Number</label>
                     <p className="text-sm text-gray-900 font-medium">{device.deviceNumber}</p>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 uppercase tracking-wide">Build</label>
-                    <p className="text-sm text-gray-900">{device.build}</p>
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Status</label>
+                    <div className="flex items-center space-x-2">
+                      <div 
+                        className="w-2 h-2 rounded-full"
+                        style={{
+                          backgroundColor: 
+                            device.status === 'good' ? '#16a34a' :
+                            device.status === 'warning' ? '#f59e0b' :
+                            device.status === 'alert' ? '#dc2626' : '#gray-400'
+                        }}
+                      ></div>
+                      <p className="text-sm text-gray-900 capitalize">{device.status}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs text-gray-400 uppercase tracking-wide">Profile</label>
+                    <select 
+                      defaultValue={device.build}
+                      className="w-full mt-1 text-sm text-gray-900 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                    >
+                      <option value="Gold">Gold</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Red">Red</option>
+                      <option value="Black">Black</option>
+                    </select>
                   </div>
                   <div>
                     <label className="text-xs text-gray-400 uppercase tracking-wide">Code</label>
@@ -154,25 +185,39 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
           <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
             <div className="flex space-x-3">
               <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors"
+                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
                 style={{ border: '1px solid #dc2626', color: '#dc2626' }}
+                onClick={handleWipeClick}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#fef2f2'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 Wipe
               </button>
               <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors"
+                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
                 style={{ border: '1px solid #2563eb', color: '#2563eb' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#eff6ff'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 Update
               </button>
               <button 
-                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors"
+                className="flex-1 py-2 px-4 text-sm font-medium uppercase tracking-wide transition-colors cursor-pointer"
                 style={{ border: '1px solid #16a34a', color: '#16a34a' }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f0fdf4'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
               >
                 Track
               </button>
             </div>
           </div>
+
+          {/* Wipe Dialog */}
+          <WipeDialog
+            device={device}
+            isOpen={isWipeDialogOpen}
+            onClose={handleWipeDialogClose}
+          />
         </div>
       </div>
     </>

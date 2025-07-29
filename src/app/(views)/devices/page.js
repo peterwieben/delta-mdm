@@ -3,6 +3,7 @@
 import MainLayout from '@/components/layout/main-layout';
 import DeviceDetailsShelf from '@/components/devices/device-details-shelf';
 import { useState } from 'react';
+import { Check, Loader2, Smartphone, File, Lock, Image, Hash, Wifi, Camera, AlertTriangle, Shield, Activity } from 'lucide-react';
 
 const devicesData = [
   // ALPHA team - mostly Gold with some Blue
@@ -192,6 +193,168 @@ const devicesData = [
   },
 ];
 
+const workflowsData = [
+  {
+    id: 1,
+    workflowName: 'Device Setup',
+    description: 'Complete onboarding workflow for new corporate devices',
+    actions: 3,
+    status: 'Active',
+    lastModified: '2025-07-25',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'install-app',
+        title: 'Install Corporate VPN',
+        config: { appName: 'Corporate VPN', packageName: 'com.corp.vpn' }
+      },
+      {
+        id: 'step-2',
+        type: 'set-pincode',
+        title: 'Set Device PIN',
+        config: { pinLength: '6', complexity: 'high' }
+      },
+      {
+        id: 'step-3',
+        type: 'add-file',
+        title: 'Install Certificate',
+        config: { fileName: 'corporate-cert.pem', destination: '/system/certs/' }
+      }
+    ]
+  },
+  {
+    id: 2,
+    workflowName: 'Security Compliance',
+    description: 'Enforce security policies and compliance checks',
+    actions: 4,
+    status: 'Active',
+    lastModified: '2025-07-24',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'strip-permissions',
+        title: 'Strip App Permissions',
+        config: {}
+      },
+      {
+        id: 'step-2',
+        type: 'disable-camera',
+        title: 'Disable Camera',
+        config: {}
+      },
+      {
+        id: 'step-3',
+        type: 'install-certificate',
+        title: 'Install Security Certificate',
+        config: { certificateType: 'corporate', domain: 'company.com' }
+      },
+      {
+        id: 'step-4',
+        type: 'configure-vpn',
+        title: 'Configure Corporate VPN',
+        config: { serverUrl: 'vpn.company.com', protocol: 'OpenVPN' }
+      }
+    ]
+  },
+  {
+    id: 3,
+    workflowName: 'App Deployment',
+    description: 'Batch installation of corporate applications',
+    actions: 3,
+    status: 'Draft',
+    lastModified: '2025-07-23',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'install-app',
+        title: 'Install Slack',
+        config: { appName: 'Slack', packageName: 'com.slack.slack' }
+      },
+      {
+        id: 'step-2',
+        type: 'install-app',
+        title: 'Install Microsoft Teams',
+        config: { appName: 'Microsoft Teams', packageName: 'com.microsoft.teams' }
+      },
+      {
+        id: 'step-3',
+        type: 'install-app',
+        title: 'Install Zoom',
+        config: { appName: 'Zoom', packageName: 'us.zoom.videomeetings' }
+      }
+    ]
+  },
+  {
+    id: 4,
+    workflowName: 'Device Wipe',
+    description: 'Complete device data wipe and factory reset',
+    actions: 2,
+    status: 'Active',
+    lastModified: '2025-07-22',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'strip-permissions',
+        title: 'Remove All App Permissions',
+        config: {}
+      },
+      {
+        id: 'step-2',
+        type: 'factory-reset',
+        title: 'Factory Reset Device',
+        config: {}
+      }
+    ]
+  },
+  {
+    id: 5,
+    workflowName: 'User Offboarding',
+    description: 'Remove corporate data and revoke access',
+    actions: 4,
+    status: 'Active',
+    lastModified: '2025-07-21',
+    steps: [
+      {
+        id: 'step-1',
+        type: 'strip-permissions',
+        title: 'Revoke App Permissions',
+        config: {}
+      },
+      {
+        id: 'step-2',
+        type: 'disable-camera',
+        title: 'Disable Camera Access',
+        config: {}
+      },
+      {
+        id: 'step-3',
+        type: 'add-file',
+        title: 'Remove Corporate Files',
+        config: { fileName: 'cleanup.sh', destination: '/tmp/' }
+      },
+      {
+        id: 'step-4',
+        type: 'factory-reset',
+        title: 'Complete Device Wipe',
+        config: {}
+      }
+    ]
+  },
+];
+
+const actionTypeIcons = {
+  'install-app': Smartphone,
+  'add-file': File,
+  'strip-permissions': Lock,
+  'set-background': Image,
+  'set-pincode': Hash,
+  'enable-wifi': Wifi,
+  'disable-camera': Camera,
+  'factory-reset': AlertTriangle,
+  'install-certificate': Shield,
+  'configure-vpn': Activity
+};
+
 export default function DevicesPage() {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [isShelfOpen, setIsShelfOpen] = useState(false);
@@ -200,6 +363,11 @@ export default function DevicesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDevices, setSelectedDevices] = useState(new Set());
   const [lastSelectedIndex, setLastSelectedIndex] = useState(null);
+  const [isWorkflowSheetOpen, setIsWorkflowSheetOpen] = useState(false);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [workflowSearchTerm, setWorkflowSearchTerm] = useState('');
+  const [isRunningWorkflow, setIsRunningWorkflow] = useState(false);
+  const [workflowStepProgress, setWorkflowStepProgress] = useState({});
 
   const handleCheckboxChange = (device, index, event) => {
     event.stopPropagation();
@@ -272,6 +440,59 @@ export default function DevicesPage() {
     // Implement bulk actions here
   };
 
+  const handleWorkflowSelect = (workflow) => {
+    setSelectedWorkflow(workflow);
+    setWorkflowSearchTerm('');
+  };
+
+  const handleWorkflowRemove = () => {
+    setSelectedWorkflow(null);
+  };
+
+  const handleRunWorkflow = async () => {
+    if (!selectedWorkflow) return;
+    
+    setIsRunningWorkflow(true);
+    setWorkflowStepProgress({});
+    
+    // Simulate step-by-step execution
+    for (let i = 0; i < selectedWorkflow.steps.length; i++) {
+      // Mark current step as running
+      setWorkflowStepProgress(prev => ({
+        ...prev,
+        [i]: 'running'
+      }));
+      
+      // Simulate step execution time (1-2 seconds per step)
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+      
+      // Mark step as completed
+      setWorkflowStepProgress(prev => ({
+        ...prev,
+        [i]: 'completed'
+      }));
+    }
+    
+    // Wait a moment to show all completed
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    setIsRunningWorkflow(false);
+    setIsWorkflowSheetOpen(false);
+    setSelectedWorkflow(null);
+    setWorkflowSearchTerm('');
+    setWorkflowStepProgress({});
+    
+    console.log(`Running workflow '${selectedWorkflow.workflowName}' on ${selectedDevices.size} devices`);
+  };
+
+  const handleCloseWorkflowSheet = () => {
+    setIsWorkflowSheetOpen(false);
+    setSelectedWorkflow(null);
+    setWorkflowSearchTerm('');
+    setIsRunningWorkflow(false);
+    setWorkflowStepProgress({});
+  };
+
   const filteredDevices = devicesData.filter(device => {
     if (!searchTerm) return true;
     const searchLower = searchTerm.toLowerCase();
@@ -297,6 +518,15 @@ export default function DevicesPage() {
     return 0;
   });
 
+  const filteredWorkflows = workflowsData.filter(workflow => {
+    if (!workflowSearchTerm) return workflow.status === 'Active';
+    const searchLower = workflowSearchTerm.toLowerCase();
+    return workflow.status === 'Active' && (
+      workflow.workflowName.toLowerCase().includes(searchLower) ||
+      workflow.description.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <MainLayout>
       <div className="space-y-8">
@@ -320,22 +550,22 @@ export default function DevicesPage() {
               <span className="text-sm text-gray-600">{selectedDevices.size} selected</span>
               <div className="flex space-x-2">
                 <button
-                  onClick={() => handleBulkAction('assign-profile')}
+                  onClick={() => setIsWorkflowSheetOpen(true)}
                   className="bg-black text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-800 transition-colors"
                 >
-                  Assign Profile
+                  RUN WORKFLOW
                 </button>
                 <button
-                  onClick={() => handleBulkAction('remove-profile')}
+                  onClick={() => handleBulkAction('apply-profile')}
                   className="bg-gray-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-gray-700 transition-colors"
                 >
-                  Remove Profile
+                  APPLY PROFILE
                 </button>
                 <button
                   onClick={() => setSelectedDevices(new Set())}
                   className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-xs font-medium hover:bg-gray-300 transition-colors"
                 >
-                  Clear
+                  CLEAR
                 </button>
               </div>
             </div>
@@ -459,6 +689,181 @@ export default function DevicesPage() {
         isOpen={isShelfOpen}
         onClose={handleCloseShelf}
       />
+
+      {/* Workflow Selection Sheet */}
+      {isWorkflowSheetOpen && (
+        <div className="fixed inset-0 flex items-end justify-end z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.25)' }}>
+          <div className="bg-white rounded-lg shadow-xl w-96 h-[700px] flex flex-col m-4">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex items-center space-x-3">
+                {selectedWorkflow && (
+                  <button
+                    onClick={handleWorkflowRemove}
+                    className="text-gray-400 hover:text-gray-600"
+                    disabled={isRunningWorkflow}
+                  >
+                    ←
+                  </button>
+                )}
+                <h3 className="text-sm font-medium text-black uppercase tracking-widest">
+                  {selectedWorkflow ? selectedWorkflow.workflowName : 'Run Workflow'}
+                </h3>
+              </div>
+              <button
+                onClick={handleCloseWorkflowSheet}
+                className="text-gray-400 hover:text-gray-600 text-lg"
+                disabled={isRunningWorkflow}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+              {/* Selected Workflow Steps Display */}
+              {selectedWorkflow ? (
+                <div className="space-y-4">
+                  {/* Workflow Info */}
+                  <div className="bg-gray-50 rounded-md p-3">
+                    <p className="text-sm font-medium text-gray-900">{selectedWorkflow.workflowName}</p>
+                    <p className="text-xs text-gray-500">{selectedWorkflow.description}</p>
+                    <p className="text-xs text-gray-400 mt-1">{selectedWorkflow.steps.length} steps</p>
+                  </div>
+
+                  {/* Workflow Steps */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wide">Workflow Steps</h4>
+                    {selectedWorkflow.steps.map((step, index) => {
+                      const stepStatus = workflowStepProgress[index];
+                      const isCompleted = stepStatus === 'completed';
+                      const isRunning = stepStatus === 'running';
+                      const ActionIcon = actionTypeIcons[step.type] || File;
+                      
+                      return (
+                        <div key={index} className="flex items-start space-x-3">
+                          {/* Step Icon */}
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center border ${
+                            isCompleted 
+                              ? 'bg-black border-black text-white' 
+                              : isRunning
+                              ? 'bg-white border-gray-300 text-gray-600'
+                              : 'bg-white border-gray-200 text-gray-400'
+                          }`}>
+                            {isCompleted ? (
+                              <Check size={12} />
+                            ) : isRunning ? (
+                              <Loader2 size={12} className="animate-spin" />
+                            ) : (
+                              <span className="text-xs">{index + 1}</span>
+                            )}
+                          </div>
+                          
+                          {/* Step Content */}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2">
+                              <ActionIcon size={14} className={`${
+                                isCompleted ? 'text-gray-400' 
+                                : isRunning ? 'text-gray-600' 
+                                : 'text-gray-400'
+                              }`} />
+                              <p className={`text-sm ${
+                                isCompleted ? 'text-black font-medium line-through' 
+                                : isRunning ? 'text-black font-medium' 
+                                : 'text-gray-500'
+                              }`}>
+                                {step.title}
+                              </p>
+                            </div>
+                            
+                            {/* Configuration Details */}
+                            {step.config && Object.keys(step.config).length > 0 && (
+                              <div className="mt-1 ml-5 space-y-1">
+                                {Object.entries(step.config).map(([key, value]) => (
+                                  <p key={key} className={`text-xs ${
+                                    isCompleted ? 'text-gray-400 line-through' 
+                                    : isRunning ? 'text-gray-600' 
+                                    : 'text-gray-400'
+                                  }`}>
+                                    {key}: {value}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                            
+                            {/* Minimal Progress Indicator */}
+                            {isRunning && (
+                              <div className="mt-2 ml-5 w-full bg-gray-100 rounded-full h-0.5">
+                                <div className="bg-gray-400 h-0.5 rounded-full animate-pulse" style={{ width: '60%' }}></div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Search */}
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Search workflows..."
+                      value={workflowSearchTerm}
+                      onChange={(e) => setWorkflowSearchTerm(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+                    />
+                  </div>
+
+                  {/* Workflow List */}
+                  <div className="space-y-2 flex-1 overflow-y-auto">
+                    {filteredWorkflows.length > 0 ? (
+                      filteredWorkflows.map((workflow) => (
+                        <div
+                          key={workflow.id}
+                          onClick={() => handleWorkflowSelect(workflow)}
+                          className="p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer transition-colors"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">{workflow.workflowName}</p>
+                              <p className="text-xs text-gray-500">{workflow.description}</p>
+                            </div>
+                            <span className="text-xs text-gray-400">{workflow.actions} actions</span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-gray-500 text-center py-4">No active workflows found</p>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Footer */}
+            {selectedWorkflow && (
+              <div className="p-4 border-t">
+                <button
+                  onClick={handleRunWorkflow}
+                  disabled={isRunningWorkflow}
+                  className="w-full bg-black text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isRunningWorkflow ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Running...
+                    </>
+                  ) : (
+                    'Run'
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </MainLayout>
   );
 }
