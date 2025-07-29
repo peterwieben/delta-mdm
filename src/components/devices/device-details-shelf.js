@@ -443,36 +443,18 @@ export default function DeviceDetailsShelf({ device, isOpen, onClose }) {
                 {/* Installed Apps */}
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-4">Installed Apps</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm">💬</div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Slack</p>
-                          <p className="text-xs text-gray-500">v4.29.0</p>
-                        </div>
-                      </div>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Installed</span>
+                  <div>
+                    <div className="flex justify-between items-center py-3 border-t" style={{ borderTopColor: '#f2f2f2' }}>
+                      <span className="text-sm text-gray-900">Slack</span>
+                      <span className="text-xs text-gray-500">v4.29.0</span>
                     </div>
-                    <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm">📧</div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Outlook</p>
-                          <p className="text-xs text-gray-500">v4.2242.0</p>
-                        </div>
-                      </div>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Installed</span>
+                    <div className="flex justify-between items-center py-3 border-t" style={{ borderTopColor: '#f2f2f2' }}>
+                      <span className="text-sm text-gray-900">Outlook</span>
+                      <span className="text-xs text-gray-500">v4.2242.0</span>
                     </div>
-                    <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm">🌐</div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Chrome</p>
-                          <p className="text-xs text-gray-500">v131.0.6778</p>
-                        </div>
-                      </div>
-                      <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded-full">Installed</span>
+                    <div className="flex justify-between items-center py-3 border-t" style={{ borderTopColor: '#f2f2f2' }}>
+                      <span className="text-sm text-gray-900">Chrome</span>
+                      <span className="text-xs text-gray-500">v131.0.6778</span>
                     </div>
                   </div>
                 </div>
